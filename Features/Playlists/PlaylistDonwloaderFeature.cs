@@ -53,6 +53,8 @@ public class PlaylistDonwloaderFeature
         public Validator()
         {
             RuleFor(_ => _.Url)
+                .Matches("^(https|http):\\/\\/(?:www\\.)?youtube\\.com\\/watch\\?((v=.*&list=.*)|(list=.*&v=.*))(&.*)*$")
+                .WithMessage("That's not a valid YouTube link!")
                 .NotEmpty();
         }
     }

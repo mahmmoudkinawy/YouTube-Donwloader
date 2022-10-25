@@ -4,6 +4,18 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddFastEndpoints();
 
+builder.Services.AddCors(_ =>
+{
+    _.AddPolicy("Client", _ =>
+    {
+        _
+            .WithOrigins("http://localhost:4200")
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials();
+    });
+});
+
 builder.Services.AddSwaggerDoc(serializerSettings: _ =>
 {
     _.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
@@ -15,6 +27,8 @@ var app = builder.Build();
 app.UseOpenApi();
 
 app.UseSwaggerUi3(_ => _.ConfigureDefaults());
+
+app.UseCors("Client");
 
 app.UseAuthorization();
 

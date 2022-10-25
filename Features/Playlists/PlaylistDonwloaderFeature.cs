@@ -27,7 +27,7 @@ public class PlaylistDonwloaderFeature
                     .Where(s => s.Container == Container.Mp4)
                     .GetWithHighestVideoQuality();
 
-                var fullPath = $@"F:\{video.Title}.{streamInfo.Container}";
+                var fullPath = $@"D:\{video.Title}.{streamInfo.Container}";
 
                 await _youtubeClient.Videos.Streams
                    .DownloadAsync(

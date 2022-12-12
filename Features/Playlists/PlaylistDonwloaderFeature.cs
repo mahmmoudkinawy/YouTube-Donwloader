@@ -17,6 +17,8 @@ public class PlaylistDonwloaderFeature
             var videos = await _youtubeClient.Playlists
                 .GetVideosAsync(r.Url, c);
 
+            int counter = 0;
+
             foreach (var video in videos)
             {
                 var streamManifest = await _youtubeClient.Videos.Streams
@@ -27,7 +29,16 @@ public class PlaylistDonwloaderFeature
                     .Where(s => s.Container == Container.Mp4)
                     .GetWithHighestVideoQuality();
 
-                var fullPath = $@"D:\{video.Title}.{streamInfo.Container}";
+                var videoName = $"{++counter}-{video.Title}.{streamInfo.Container}";
+
+                videoName = videoName.Replace(@"|", @"-");
+                videoName = videoName.Replace(@"\", @"-");
+                videoName = videoName.Replace(@"/", @"-");
+                videoName = videoName.Replace("\"", "'");
+                videoName = videoName.Replace("?", " ");
+
+                var fullPath =
+                    @$"{r.LocalFilePath}\{videoName}";
 
                 await _youtubeClient.Videos.Streams
                    .DownloadAsync(
@@ -46,6 +57,7 @@ public class PlaylistDonwloaderFeature
     public class Request
     {
         public string Url { get; set; }
+        public string LocalFilePath { get; set; }
     }
 
     public class Validator : Validator<Request>
@@ -55,6 +67,9 @@ public class PlaylistDonwloaderFeature
             RuleFor(_ => _.Url)
                 .Matches("^(https|http):\\/\\/(?:www\\.)?youtube\\.com\\/watch\\?((v=.*&list=.*)|(list=.*&v=.*))(&.*)*$")
                 .WithMessage("That's not a valid YouTube link!")
+                .NotEmpty();
+
+            RuleFor(_ => _.LocalFilePath)
                 .NotEmpty();
         }
     }

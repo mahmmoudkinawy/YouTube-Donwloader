@@ -1,8 +1,8 @@
 ﻿namespace API.Features.Playlists;
 
-public class PlaylistDonwloaderFeature
+public sealed class PlaylistsDonwloaderFeature
 {
-    public class Endpoint : Endpoint<Request, Response>
+    public sealed class Endpoint : Endpoint<Request, Response>
     {
         public override void Configure()
         {
@@ -27,7 +27,8 @@ public class PlaylistDonwloaderFeature
                 var streamInfo = streamManifest
                     .GetMuxedStreams()
                     .Where(s => s.Container == Container.Mp4)
-                    .GetWithHighestVideoQuality();
+                    // .GetWithHighestVideoQuality();
+                    .TryGetWithHighestVideoQuality();
 
                 var videoName = $"{++counter}-{video.Title}.{streamInfo.Container}";
 
@@ -54,13 +55,13 @@ public class PlaylistDonwloaderFeature
         }
     }
 
-    public class Request
+    public sealed class Request
     {
         public string Url { get; set; }
         public string LocalFilePath { get; set; }
     }
 
-    public class Validator : Validator<Request>
+    public sealed class Validator : Validator<Request>
     {
         public Validator()
         {
@@ -74,7 +75,7 @@ public class PlaylistDonwloaderFeature
         }
     }
 
-    public class Response
+    public sealed class Response
     {
         public string Message { get; set; }
     }
